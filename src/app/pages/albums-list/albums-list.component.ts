@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-albums-list',
@@ -8,7 +8,8 @@ import { Component, OnInit } from '@angular/core';
     </p>
   `,
   styles: [
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AlbumsListComponent implements OnInit {
 
