@@ -59,7 +59,7 @@ import {User} from '../../models/user.model';
 export class UserTableComponent implements OnInit {
 
     @Input() users: User[];
-    @Output() getUser = new EventEmitter<number>()
+    @Output() getUser = new EventEmitter<number>();
 
     constructor() {
     }
