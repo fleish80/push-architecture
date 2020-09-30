@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
 import {User} from '../../models/user.model';
 
 @Component({
@@ -18,7 +18,7 @@ import {User} from '../../models/user.model';
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let user of users">
+            <tr *ngFor="let user of users" (click)="userClick(user.id)">
                 <td>{{user.name}}</td>
                 <td>{{user.username}}</td>
                 <td>{{user.email}}</td>
@@ -40,12 +40,15 @@ import {User} from '../../models/user.model';
             width: 100%;
             border-collapse: collapse;
         }
+
         th {
             text-align: start;
         }
+
         tr {
             height: 50px;
         }
+
         tbody tr:hover {
             cursor: pointer;
             background-color: gray;
@@ -56,6 +59,7 @@ import {User} from '../../models/user.model';
 export class UserTableComponent implements OnInit {
 
     @Input() users: User[];
+    @Output() getUser = new EventEmitter<number>()
 
     constructor() {
     }
@@ -63,4 +67,7 @@ export class UserTableComponent implements OnInit {
     ngOnInit(): void {
     }
 
+    userClick(userId: number) {
+        this.getUser.emit(userId);
+    }
 }

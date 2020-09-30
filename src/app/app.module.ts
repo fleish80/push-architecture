@@ -4,14 +4,14 @@ import {NgModule} from '@angular/core';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {UserTableComponent} from './pages/user-table/user-table.component';
-import {AlbumsListComponent} from './pages/albums-list/albums-list.component';
 import {HttpClientModule} from '@angular/common/http';
+import { PhotoComponent } from './pages/photo/photo.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         UserTableComponent,
-        AlbumsListComponent
+        PhotoComponent
     ],
     imports: [
         BrowserModule,
