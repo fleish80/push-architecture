@@ -2,9 +2,9 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {User} from '../models/user.model';
-import {AlbumService} from './album.service';
 import {MVContext} from '../models/mv-context.model';
 import {catchError, map} from 'rxjs/operators';
+import {GeneralService} from './general.service';
 
 export const jsonPlaceHolderUrl = 'https://jsonplaceholder.typicode.com';
 export const userUrl = 'users';
@@ -16,7 +16,7 @@ export class UserService {
 
   private usersContext$ = new BehaviorSubject<MVContext<User[]>>(null);
 
-  constructor(private http: HttpClient, private albumService: AlbumService) {
+  constructor(private http: HttpClient, private generalService: GeneralService) {
     this.load();
   }
 
@@ -43,7 +43,7 @@ export class UserService {
   }
 
   choosePhoto(userId: number) {
-    this.albumService.load(userId);
+    this.generalService.setUserId(userId);
   }
 
 
