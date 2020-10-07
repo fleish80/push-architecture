@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
+import {Observable, ReplaySubject} from 'rxjs';
 import {Photo} from '../models/photo.model';
 import {jsonPlaceHolderUrl} from './user.service';
 import {HttpClient} from '@angular/common/http';
@@ -7,14 +7,23 @@ import {HttpClient} from '@angular/common/http';
 export const photosUrl = 'photos';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class AlbumService {
 
-  constructor(private http: HttpClient) { }
+    private photo$ = new ReplaySubject<Photo>(1);
 
-  getPhoto(userId: number): Observable<Photo> {
-    return this.http.get<Photo>(`${jsonPlaceHolderUrl}/${photosUrl}/${userId}`);
+    constructor(private http: HttpClient) {
+    }
 
-  }
-}
+    load(userId: number) {
+        this.http.get<Photo>(`${jsonPlaceHolderUrl}/${photosUrl}/${userId}`)
+            .subscribe((photo: Photo) => {
+                this.photo$.next(photo);
+            });
+    }
+
+    getPhoto(): Observable<Photo> {
+      return this.photo$.asObservable();
+    }
+ }
