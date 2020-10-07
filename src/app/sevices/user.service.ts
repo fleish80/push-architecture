@@ -1,8 +1,10 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {Observable, ReplaySubject} from 'rxjs';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import {User} from '../models/user.model';
 import {AlbumService} from './album.service';
+import {MVContext} from '../models/mv-context.model';
+import {catchError, map} from 'rxjs/operators';
 
 export const jsonPlaceHolderUrl = 'https://jsonplaceholder.typicode.com';
 export const userUrl = 'users';
@@ -12,19 +14,32 @@ export const userUrl = 'users';
 })
 export class UserService {
 
-  private users$ = new ReplaySubject<User[]>(1);
+  private usersContext$ = new BehaviorSubject<MVContext<User[]>>(null);
 
   constructor(private http: HttpClient, private albumService: AlbumService) {
     this.load();
   }
 
   load() {
+    this.usersContext$.next({...this.usersContext$.getValue(), ...{loading: false}});
     this.http.get<User[]>(`${jsonPlaceHolderUrl}/${userUrl}`)
-        .subscribe((users: User[]) => {this.users$.next(users)});
+        .pipe(map((users: User[]) => {
+          return {
+            loading: false,
+            data: users
+          } as MVContext<User[]>
+        }),
+        catchError((errorResponse: HttpErrorResponse) => {
+          return of({
+            loading: false,
+            errorResponse
+          } as MVContext<User[]>);
+        }))
+        .subscribe((context: MVContext<User[]>) => {this.usersContext$.next(context)});
   }
 
-  getUsers$(): Observable<User[]> {
-    return this.users$.asObservable();
+  getUsers$(): Observable<MVContext<User[]>> {
+    return this.usersContext$.asObservable();
   }
 
   choosePhoto(userId: number) {
