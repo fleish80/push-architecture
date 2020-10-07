@@ -28,7 +28,7 @@ export class AlbumService {
             });
     }
 
-    getPhoto(): Observable<Photo> {
+    getStore(): Observable<Photo> {
       return this.photo$.asObservable();
     }
  }

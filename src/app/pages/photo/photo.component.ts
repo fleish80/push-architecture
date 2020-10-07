@@ -32,7 +32,7 @@ export class PhotoComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.photo$ = this.albumService.getPhoto();
+        this.photo$ = this.albumService.getStore();
     }
 
 }

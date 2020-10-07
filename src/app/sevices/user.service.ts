@@ -38,7 +38,7 @@ export class UserService {
         .subscribe((context: MVContext<User[]>) => {this.usersContext$.next(context)});
   }
 
-  getUsers$(): Observable<MVContext<User[]>> {
+  getStore(): Observable<MVContext<User[]>> {
     return this.usersContext$.asObservable();
   }
 

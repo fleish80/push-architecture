@@ -71,7 +71,7 @@ export class UserTableComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.usersContext$ = this.userService.getUsers$();
+        this.usersContext$ = this.userService.getStore();
     }
 
     userClick(userId: number) {
