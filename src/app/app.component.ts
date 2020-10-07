@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {User} from './models/user.model';
 import {UserService} from './sevices/user.service';
 import {Photo} from './models/photo.model';
+import {AlbumService} from './sevices/album.service';
 
 @Component({
     selector: 'app-root',
@@ -16,7 +17,7 @@ export class AppComponent implements OnInit {
     users: User[];
     photo: Photo;
 
-    constructor(private userService: UserService) {
+    constructor(private userService: UserService, private albumService: AlbumService) {
     }
 
     ngOnInit(): void {
@@ -27,7 +28,7 @@ export class AppComponent implements OnInit {
     }
 
     setPhoto(userId: number) {
-        this.userService.getPhoto(userId)
+        this.albumService.getPhoto(userId)
             .subscribe((photo: Photo) => {
                 this.photo = photo;
             });
