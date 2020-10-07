@@ -1,11 +1,15 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Photo} from '../../models/photo.model';
+import {AlbumService} from '../../sevices/album.service';
+import {Observable} from 'rxjs';
 
 @Component({
     selector: 'app-photo',
     template: `
-        <h2 class="photo-title">{{photo.title}}</h2>
-        <img [src]="photo.thumbnailUrl" alt="">
+        <ng-container *ngIf="photo$ | async as photo">
+            <h2 class="photo-title">{{photo.title}}</h2>
+            <img [src]="photo.thumbnailUrl" alt="">
+        </ng-container>
     `,
     styles: [`
         :host {
@@ -14,6 +18,7 @@ import {Photo} from '../../models/photo.model';
             flex-direction: column;
             align-items: center;
         }
+
         .photo-title {
             font-size: 30px;
         }
@@ -21,12 +26,13 @@ import {Photo} from '../../models/photo.model';
 })
 export class PhotoComponent implements OnInit {
 
-    @Input() photo: Photo;
+    photo$: Observable<Photo>;
 
-    constructor() {
+    constructor(private albumService: AlbumService) {
     }
 
     ngOnInit(): void {
+        this.photo$ = this.albumService.getPhoto();
     }
 
 }

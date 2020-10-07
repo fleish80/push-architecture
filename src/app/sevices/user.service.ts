@@ -1,26 +1,35 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {Observable, ReplaySubject} from 'rxjs';
 import {User} from '../models/user.model';
-import {Photo} from '../models/photo.model';
+import {AlbumService} from './album.service';
 
 export const jsonPlaceHolderUrl = 'https://jsonplaceholder.typicode.com';
 export const userUrl = 'users';
-export const photosUrl = 'photos';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
-  constructor(private http: HttpClient) { }
+  private users$ = new ReplaySubject<User[]>(1);
 
-  getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(`${jsonPlaceHolderUrl}/${userUrl}`);
+  constructor(private http: HttpClient, private albumService: AlbumService) {
+    this.load();
   }
 
-  getPhoto(userId: number): Observable<Photo> {
-    return this.http.get<Photo>(`${jsonPlaceHolderUrl}/${photosUrl}/${userId}`);
-
+  load() {
+    this.http.get<User[]>(`${jsonPlaceHolderUrl}/${userUrl}`)
+        .subscribe((users: User[]) => {this.users$.next(users)});
   }
+
+  getUsers$(): Observable<User[]> {
+    return this.users$.asObservable();
+  }
+
+  choosePhoto(userId: number) {
+    this.albumService.load(userId);
+  }
+
+
 }

@@ -1,10 +1,12 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {User} from '../../models/user.model';
+import {UserService} from '../../sevices/user.service';
+import {Observable} from 'rxjs';
 
 @Component({
     selector: 'app-user-table',
     template: `
-        <table class="table">
+        <table class="table" *ngIf="user$ | async as users">
             <thead>
             <tr>
                 <th>Name</th>
@@ -58,16 +60,16 @@ import {User} from '../../models/user.model';
 })
 export class UserTableComponent implements OnInit {
 
-    @Input() users: User[];
-    @Output() getUser = new EventEmitter<number>();
+    user$: Observable<User[]>;
 
-    constructor() {
+    constructor(private userService: UserService) {
     }
 
     ngOnInit(): void {
+        this.user$ = this.userService.getUsers$();
     }
 
     userClick(userId: number) {
-        this.getUser.emit(userId);
+        this.userService.choosePhoto(userId);
     }
 }
