@@ -1,35 +1,39 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable, ReplaySubject} from 'rxjs';
 import {User} from '../models/user.model';
-import {AlbumService} from './album.service';
+import {AbstractStoreService} from './abstract-store.service';
+import {GeneralService} from './general.service';
+import {MVContext} from '../models/mv-context.model';
+import {Observable} from 'rxjs';
 
 export const jsonPlaceHolderUrl = 'https://jsonplaceholder.typicode.com';
 export const userUrl = 'users';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
-export class UserService {
+export class UserService extends AbstractStoreService<User[]> {
 
-  private users$ = new ReplaySubject<User[]>(1);
+    constructor(protected http: HttpClient, private generalService: GeneralService) {
+        super(http);
+        this.url = `${jsonPlaceHolderUrl}/${userUrl}`;
+        this.load();
+        this.getStore()
+            .subscribe((context: MVContext<User[]>) => {
+                if (context.data && !context.loading && !context.errorResponse) {
+                    const users = context.data;
+                    this.generalService.setUserId(users[0].id);
+                }
+            })
+    }
 
-  constructor(private http: HttpClient, private albumService: AlbumService) {
-    this.load();
-  }
+    choosePhoto(userId: number) {
+        this.generalService.setUserId(userId);
+    }
 
-  load() {
-    this.http.get<User[]>(`${jsonPlaceHolderUrl}/${userUrl}`)
-        .subscribe((users: User[]) => {this.users$.next(users)});
-  }
-
-  getUsers$(): Observable<User[]> {
-    return this.users$.asObservable();
-  }
-
-  choosePhoto(userId: number) {
-    this.albumService.load(userId);
-  }
+    getUSerId$(): Observable<number> {
+        return this.generalService.getUSerId$();
+    }
 
 
 }
