@@ -24,7 +24,7 @@ import {MVContext} from '../../models/mv-context.model';
                 </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let user of users" (click)="userClick(user.id)">
+                <tr *ngFor="let user of users" (click)="userClick(user.id)" [class.selected]="(selectedUserId$ | async) === user.id">
                     <td>{{user.name}}</td>
                     <td>{{user.username}}</td>
                     <td>{{user.email}}</td>
@@ -55,10 +55,16 @@ import {MVContext} from '../../models/mv-context.model';
         tr {
             height: 50px;
         }
+        
+        tr.selected {
+            background-color: #f0f0f5;
+
+        }
 
         tbody tr:hover {
             cursor: pointer;
             background-color: gray;
+            color: white;
         }
     `],
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -66,12 +72,14 @@ import {MVContext} from '../../models/mv-context.model';
 export class UserTableComponent implements OnInit {
 
     usersContext$: Observable<MVContext<User[]>>;
+    selectedUserId$: Observable<number>;
 
     constructor(private userService: UserService) {
     }
 
     ngOnInit(): void {
         this.usersContext$ = this.userService.getStore();
+        this.selectedUserId$ = this.userService.getUSerId$();
     }
 
     userClick(userId: number) {
