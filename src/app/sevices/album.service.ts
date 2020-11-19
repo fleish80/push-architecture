@@ -16,8 +16,7 @@ export class AlbumService extends AbstractStoreService<Photo> {
         super(http);
         this.userIdService.getState()
             .subscribe((userId: number) => {
-                this.url = `${jsonPlaceHolderUrl}/${photosUrl}/${userId}`;
-                this.load();
+                this.load(`${jsonPlaceHolderUrl}/${photosUrl}/${userId}`);
             });
     }
 

@@ -9,8 +9,8 @@ class ReduxExtension {
         }
     }
 
-    public sendAction(action: string, state: any): void {
-        this.devTools.send(action, state);
+    public sendAction(constructor: Function, state: any): void {
+        this.devTools.send(constructor.toString().match(/\w+/g)[1], state);
     }
 }
 

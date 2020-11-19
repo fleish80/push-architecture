@@ -5,11 +5,8 @@ export class ReactiveState<T> {
 
     private readonly state$: BehaviorSubject<T>;
 
-    protected get state(): T {
-        return this.state$.getValue();
-    }
-
     constructor(initialState: T) {
+        reduxExtension.sendAction(this.constructor, initialState);
         this.state$ = new BehaviorSubject<T>(initialState);
     }
 
@@ -18,19 +15,14 @@ export class ReactiveState<T> {
     }
 
     public setState(newState: Partial<T> | T): void {
-        reduxExtension.sendAction('set-state', newState);
+        reduxExtension.sendAction(this.constructor, newState);
         if (typeof newState === 'object') {
             this.state$.next({
-                ...this.state,
+                ...this.state$.getValue(),
                 ...newState,
             });
         } else {
             this.state$.next(newState);
         }
     }
-
-    protected updateExtension(action): void {
-        reduxExtension.sendAction(action, this.state);
-    }
-
 }

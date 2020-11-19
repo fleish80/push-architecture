@@ -14,8 +14,7 @@ export const userUrl = 'users';
 export class UserService extends AbstractStoreService<User[]> {
 
     constructor(protected http: HttpClient, private userIdService: UserIdService) {
-        super(http);
-        this.url = `${jsonPlaceHolderUrl}/${userUrl}`;
+        super(http, `${jsonPlaceHolderUrl}/${userUrl}`);
         this.load();
         this.getStore()
             .subscribe((context: MVContext<User[]>) => {
