@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Photo} from '../../models/photo.model';
 import {AlbumService} from '../../sevices/album.service';
 import {Observable} from 'rxjs';
@@ -22,7 +22,8 @@ import {Observable} from 'rxjs';
         .photo-title {
             font-size: 30px;
         }
-    `]
+    `],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PhotoComponent implements OnInit {
 
