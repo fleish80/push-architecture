@@ -7,17 +7,17 @@ import {UserIdService} from './user-id.service';
 
 export const photosUrl = 'photos';
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable()
 export class AlbumService extends AbstractStoreService<Photo> {
 
     constructor(protected http: HttpClient, private userIdService: UserIdService) {
         super(http);
         this.userIdService.getState()
             .subscribe((userId: number) => {
-                this.load(`${jsonPlaceHolderUrl}/${photosUrl}/${userId}`);
+                if (userId) {
+                    this.load(`${jsonPlaceHolderUrl}/${photosUrl}/${userId}`);
+                }
             });
     }
 
- }
+}

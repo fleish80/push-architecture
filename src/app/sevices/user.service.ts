@@ -8,9 +8,7 @@ import {UserIdService} from './user-id.service';
 export const jsonPlaceHolderUrl = 'https://jsonplaceholder.typicode.com';
 export const userUrl = 'users';
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable()
 export class UserService extends AbstractStoreService<User[]> {
 
     constructor(protected http: HttpClient, private userIdService: UserIdService) {

@@ -68,7 +68,8 @@ import {UserIdService} from '../../sevices/user-id.service';
             color: white;
         }
     `],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [UserService]
 })
 export class UserTableComponent implements OnInit {
 
