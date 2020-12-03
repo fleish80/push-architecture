@@ -10,8 +10,10 @@ import {MVContext} from '../../models/mv-context.model';
         <ng-container *ngIf="photoContext$ | async as photoContext">
             <div *ngIf="photoContext.loading">...loading</div>
             <div *ngIf="photoContext.errorResponse">{{photoContext.errorResponse.message}}</div>
-            <h2 class="photo-title">{{photoContext.data.title}}</h2>
-            <img [src]="photoContext.data.thumbnailUrl" alt="">
+            <ng-container *ngIf="photoContext.data as photo">
+                <h2 class="photo-title">{{photo.title}}</h2>
+                <img [src]="photo.thumbnailUrl" alt="">
+            </ng-container>
         </ng-container>
     `,
     styles: [`
@@ -25,7 +27,8 @@ import {MVContext} from '../../models/mv-context.model';
         .photo-title {
             font-size: 30px;
         }
-    `]
+    `],
+    providers: [AlbumService]
 })
 export class PhotoComponent implements OnInit {
 
