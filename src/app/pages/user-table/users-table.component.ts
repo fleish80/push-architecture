@@ -1,17 +1,21 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {User} from '../../models/user.model';
-import {UserService} from '../../sevices/user/user.service';
+import {UsersService} from '../../sevices/users/users.service';
 import {Observable} from 'rxjs';
 import {Store} from '@ngrx/store';
-import {UserState} from '../../state/user-state.model';
-import {currentUserId} from '../../state/user.reducer';
-import * as UserActions from '../../state/user.actions';
+import {CurrentUserState} from '../../state/current-user-state.model';
+import {currentUserId} from '../../state/current-user.reducer';
+import * as UserActions from '../../state/current-user.actions';
 import {HttpErrorResponse} from '@angular/common/http';
+import {UsersControlsService} from '../../sevices/users/users-controls.service';
+import {UsersFilteredService} from '../../sevices/users/users-filtered.service';
 
 
 @Component({
     selector: 'app-user-table',
     template: `
+            <label>Filer</label>
+            <input type="text" [formControl]="filterCtrl">
         <div *ngIf="loading$ | async">...loading</div>
         <div *ngIf="errorResponse$ | async as errorResponse">{{errorResponse.message}}</div>
         <table class="table" *ngIf="users$ | async as users">
@@ -72,26 +76,33 @@ import {HttpErrorResponse} from '@angular/common/http';
         }
     `],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [UserService]
+    providers: [UsersService, UsersFilteredService, UsersControlsService]
 })
-export class UserTableComponent implements OnInit {
+export class UsersTableComponent implements OnInit {
 
     users$: Observable<User[]>;
     loading$: Observable<boolean>;
     errorResponse$: Observable<HttpErrorResponse>;
     selectedUserId$: Observable<number>;
 
-    constructor(private userService: UserService, private userStore: Store<UserState>) {
+    get filterCtrl() {
+        return this.usersControlsService.filterCtrl;
+    }
+
+    constructor(private userService: UsersService,
+                private userStore: Store<CurrentUserState>,
+                private usersControlsService: UsersControlsService,
+                private usersFilteredService: UsersFilteredService) {
     }
 
     ngOnInit(): void {
-        this.users$ = this.userService.data$;
+        this.users$ = this.usersFilteredService.data$;
         this.loading$ = this.userService.loading$;
         this.errorResponse$ = this.userService.errorResponse$;
         this.selectedUserId$ = this.userStore.select(currentUserId);
     }
 
     selectUser(user: User) {
-        this.userStore.dispatch(UserActions.selectUser({currentUser: user}))
+        this.userStore.dispatch(UserActions.selectCurrentUser({currentUser: user}))
     }
 }

@@ -10,7 +10,7 @@ export const jsonPlaceHolderUrl = 'https://jsonplaceholder.typicode.com';
 export const userUrl = 'users';
 
 @Injectable()
-export class UserService extends AbstractStore<User[]> {
+export class UsersService extends AbstractStore<User[]> {
 
     constructor(private http: HttpClient) {
         super(null);

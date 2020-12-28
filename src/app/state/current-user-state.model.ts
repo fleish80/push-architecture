@@ -1,5 +1,5 @@
 import {User} from '../models/user.model';
 
-export interface UserState {
+export interface CurrentUserState {
     currentUser: User;
 }

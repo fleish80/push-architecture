@@ -23,7 +23,6 @@ export abstract class AbstractStore<T> extends ComponentStore<StateContext<T>> {
   }
 
   updateLoading(loading: boolean) {
-    console.log('updateLoading loading', loading);
     this.patchState({loading});
   }
 

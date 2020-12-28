@@ -9,4 +9,8 @@ export class ReactiveStore<T> extends ComponentStore<{data: T}> {
 
     readonly data$: Observable<T> = this.select<T>((state: {data: T}) => state.data);
 
+    updateData(data: T) {
+        this.patchState({data});
+    }
+
 }
