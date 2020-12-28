@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {User} from '../../models/user.model';
-import {UserService} from '../../sevices/user.service';
+import {UserService} from '../../sevices/user/user.service';
 import {Observable} from 'rxjs';
 import {Store} from '@ngrx/store';
 import {UserState} from '../../state/user-state.model';

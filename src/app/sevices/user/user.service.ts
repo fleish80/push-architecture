@@ -1,16 +1,16 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import {User} from '../models/user.model';
+import {User} from '../../models/user.model';
 import {Observable} from 'rxjs';
 import {tapResponse} from '@ngrx/component-store';
 import {tap} from 'rxjs/operators';
-import {AbstractStoreService} from './abstract-store.service';
+import {AbstractStore} from '../../store/abstract-store';
 
 export const jsonPlaceHolderUrl = 'https://jsonplaceholder.typicode.com';
 export const userUrl = 'users';
 
 @Injectable()
-export class UserService extends AbstractStoreService<User[]> {
+export class UserService extends AbstractStore<User[]> {
 
     constructor(private http: HttpClient) {
         super(null);

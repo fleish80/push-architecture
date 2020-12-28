@@ -3,7 +3,7 @@ import {StateContext} from '../models/state-context.model';
 import {Observable} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 
-export abstract class AbstractStoreService<T> extends ComponentStore<StateContext<T>> {
+export abstract class AbstractStore<T> extends ComponentStore<StateContext<T>> {
 
   protected constructor(initialState: T) {
     super({

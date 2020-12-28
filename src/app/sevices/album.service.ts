@@ -1,19 +1,19 @@
 import {Injectable} from '@angular/core';
 import {Photo} from '../models/photo.model';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import {AbstractStoreService} from './abstract-store.service';
-import {jsonPlaceHolderUrl} from './user.service';
+import {jsonPlaceHolderUrl} from './user/user.service';
 import {Observable} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
 import {tapResponse} from '@ngrx/component-store';
 import {Store} from '@ngrx/store';
 import {UserState} from '../state/user-state.model';
 import {currentUserId} from '../state/user.reducer';
+import {AbstractStore} from '../store/abstract-store';
 
 export const photosUrl = 'photos';
 
 @Injectable()
-export class AlbumService extends AbstractStoreService<Photo> {
+export class AlbumService extends AbstractStore<Photo> {
 
     constructor(private http: HttpClient, private userStore: Store<UserState>) {
         super(null)
