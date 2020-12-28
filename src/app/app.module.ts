@@ -5,7 +5,9 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {UserTableComponent} from './pages/user-table/user-table.component';
 import {HttpClientModule} from '@angular/common/http';
-import { PhotoComponent } from './pages/photo/photo.component';
+import { StoreModule } from '@ngrx/store';
+import {userReducer} from './state/user.reducer';
+import {PhotoComponent} from './pages/photo/photo.component';
 
 @NgModule({
     declarations: [
@@ -16,7 +18,8 @@ import { PhotoComponent } from './pages/photo/photo.component';
     imports: [
         BrowserModule,
         AppRoutingModule,
-        HttpClientModule
+        HttpClientModule,
+        StoreModule.forRoot({users: userReducer}, {})
     ],
     providers: [],
     bootstrap: [AppComponent]

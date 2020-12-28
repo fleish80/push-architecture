@@ -1,53 +1,40 @@
-import {BehaviorSubject, Observable, of} from 'rxjs';
-import {catchError, map} from 'rxjs/operators';
-import {HttpClient, HttpErrorResponse, HttpResponse} from '@angular/common/http';
-import {MVContext} from '../models/mv-context.model';
-import {reduxExtension} from '../utils/redux-extension.util';
+import {ComponentStore} from '@ngrx/component-store';
+import {StateContext} from '../models/state-context.model';
+import {Observable} from 'rxjs';
+import {HttpErrorResponse} from '@angular/common/http';
 
-export class AbstractStoreService<T> {
+export abstract class AbstractStoreService<T> extends ComponentStore<StateContext<T>> {
 
-  private url: string;
-  private params: { [paramKey: string]: any };
-  protected storeSubject$: BehaviorSubject<MVContext<T>>;
-
-  protected constructor(protected http: HttpClient, url?: string, params?: { [paramKey: string]: any }) {
-    this.storeSubject$ = new BehaviorSubject<MVContext<T>>({loading: false});
-    this.url = url;
-    this.params = params;
+  protected constructor(initialState: T) {
+    super({
+      data: initialState,
+      loading: false
+    })
   }
 
-  getStore(): Observable<MVContext<T>> {
-    return this.storeSubject$.asObservable();
+  readonly data$: Observable<T> = this.select<T>((stateContext: StateContext<T>) => stateContext.data);
+  readonly loading$: Observable<boolean> = this.select<boolean>((stateContext: StateContext<T>) => stateContext.loading);
+  readonly errorResponse$: Observable<HttpErrorResponse> = this.select<HttpErrorResponse>((stateContext: StateContext<T>) => stateContext.errorResponse);
+  readonly statusCode$: Observable<number> = this.select<number>((stateContext: StateContext<T>) => stateContext.statusCode);
+
+
+  updateData(data: T) {
+    this.patchState({data});
   }
 
-  load(url?: string, params?: { [paramKey: string]: any }): void {
-    if (url) {
-      this.url = url;
-    }
-    if (params) {
-      this.params = params;
-    }
-    this.storeSubject$.next({...this.storeSubject$.getValue(), ...{loading: true}});
-    this.http.get<T>(this.url, {params: this.params, observe: 'response'})
-        .pipe(
-            map((httpResponse: HttpResponse<T>) => {
-              return {
-                data: httpResponse.body,
-                loading: false,
-                statusCode: httpResponse.status
-              };
-            }),
-            catchError((errorResponse: HttpErrorResponse) => {
-              console.error(errorResponse);
-              return of({
-                errorResponse,
-                loading: false,
-                statusCode: errorResponse.status
-              });
-            }))
-        .subscribe((contextVar: MVContext<T>) => {
-          reduxExtension.sendAction(this.constructor, contextVar);
-          this.storeSubject$.next(contextVar);
-        });
+  updateLoading(loading: boolean) {
+    console.log('updateLoading loading', loading);
+    this.patchState({loading});
   }
+
+  updateError(errorResponse: HttpErrorResponse) {
+    this.patchState({errorResponse});
+  }
+
+  updateStatusCode(statusCode: number) {
+    this.patchState({statusCode});
+  }
+
+  abstract load;
+
 }

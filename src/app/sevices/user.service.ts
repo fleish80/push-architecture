@@ -1,9 +1,10 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {User} from '../models/user.model';
+import {Observable} from 'rxjs';
+import {tapResponse} from '@ngrx/component-store';
+import {tap} from 'rxjs/operators';
 import {AbstractStoreService} from './abstract-store.service';
-import {MVContext} from '../models/mv-context.model';
-import {UserIdService} from './user-id.service';
 
 export const jsonPlaceHolderUrl = 'https://jsonplaceholder.typicode.com';
 export const userUrl = 'users';
@@ -11,15 +12,24 @@ export const userUrl = 'users';
 @Injectable()
 export class UserService extends AbstractStoreService<User[]> {
 
-    constructor(protected http: HttpClient, private userIdService: UserIdService) {
-        super(http, `${jsonPlaceHolderUrl}/${userUrl}`);
+    constructor(private http: HttpClient) {
+        super(null);
         this.load();
-        this.getStore()
-            .subscribe((context: MVContext<User[]>) => {
-                if (context.data && !context.loading && !context.errorResponse) {
-                    const users = context.data;
-                    this.userIdService.setState(users[0].id);
-                }
-            })
+    }
+
+    readonly load = this.effect(() => {
+        return this.fetch()
+            .pipe(
+                tap(() => this.updateLoading(true)),
+                tapResponse(
+                    (users: User[]) => this.updateData(users),
+                    (errorResponse: HttpErrorResponse) => this.updateError(errorResponse),
+                ),
+                tap(() => this.updateLoading(false)),
+            );
+    });
+
+    protected fetch(): Observable<User[]> {
+        return this.http.get<User[]>(`${jsonPlaceHolderUrl}/${userUrl}`);
     }
 }

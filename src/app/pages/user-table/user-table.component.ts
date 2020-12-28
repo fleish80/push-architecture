@@ -2,46 +2,49 @@ import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {User} from '../../models/user.model';
 import {UserService} from '../../sevices/user.service';
 import {Observable} from 'rxjs';
-import {MVContext} from '../../models/mv-context.model';
-import {UserIdService} from '../../sevices/user-id.service';
+import {Store} from '@ngrx/store';
+import {UserState} from '../../state/user-state.model';
+import {currentUserId} from '../../state/user.reducer';
+import * as UserActions from '../../state/user.actions';
+import {HttpErrorResponse} from '@angular/common/http';
+
 
 @Component({
     selector: 'app-user-table',
     template: `
-        <ng-container *ngIf="usersContext$ | async as userContext">
-            <div *ngIf="userContext.loading">...loading</div>
-            <div *ngIf="userContext.errorResponse">{{userContext.errorResponse.message}}</div>
-            <table class="table" *ngIf="userContext.data as users">
-                <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Address</th>
-                    <th>Phone</th>
-                    <th>Website</th>
-                    <th>Company</th>
-                    <th>Number of albums</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let user of users" (click)="userClick(user.id)" [class.selected]="(selectedUserId$ | async) === user.id">
-                    <td>{{user.name}}</td>
-                    <td>{{user.username}}</td>
-                    <td>{{user.email}}</td>
-                    <td>{{user.address.city }}/{{user.address.street}}/{{user.address.suite}}</td>
-                    <td>{{ user.phone }}</td>
-                    <td>
-                        <a href="http://{{ user.website }}" target="_blank">
-                            {{user.website}}
-                        </a>
-                    </td>
-                    <td>{{user.company.name}}</td>
-                    <td>{{user.id}}</td>
-                </tr>
-                </tbody>
-            </table>
-        </ng-container>
+        <div *ngIf="loading$ | async">...loading</div>
+        <div *ngIf="errorResponse$ | async as errorResponse">{{errorResponse.message}}</div>
+        <table class="table" *ngIf="users$ | async as users">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Phone</th>
+                <th>Website</th>
+                <th>Company</th>
+                <th>Number of albums</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let user of users" (click)="selectUser(user)"
+                [class.selected]="(selectedUserId$ | async) === user.id">
+                <td>{{user.name}}</td>
+                <td>{{user.username}}</td>
+                <td>{{user.email}}</td>
+                <td>{{user.address.city }}/{{user.address.street}}/{{user.address.suite}}</td>
+                <td>{{ user.phone }}</td>
+                <td>
+                    <a href="http://{{ user.website }}" target="_blank">
+                        {{user.website}}
+                    </a>
+                </td>
+                <td>{{user.company.name}}</td>
+                <td>{{user.id}}</td>
+            </tr>
+            </tbody>
+        </table>
     `,
     styles: [`
         table {
@@ -56,10 +59,10 @@ import {UserIdService} from '../../sevices/user-id.service';
         tr {
             height: 50px;
         }
-        
-        tr.selected {
-            background-color: #f0f0f5;
 
+        tr.selected {
+            background-color: #5A8A8A;
+            color: white;
         }
 
         tbody tr:hover {
@@ -73,18 +76,22 @@ import {UserIdService} from '../../sevices/user-id.service';
 })
 export class UserTableComponent implements OnInit {
 
-    usersContext$: Observable<MVContext<User[]>>;
+    users$: Observable<User[]>;
+    loading$: Observable<boolean>;
+    errorResponse$: Observable<HttpErrorResponse>;
     selectedUserId$: Observable<number>;
 
-    constructor(private userService: UserService, private userIdService: UserIdService) {
+    constructor(private userService: UserService, private userStore: Store<UserState>) {
     }
 
     ngOnInit(): void {
-        this.usersContext$ = this.userService.getStore();
-        this.selectedUserId$ = this.userIdService.getState();
+        this.users$ = this.userService.data$;
+        this.loading$ = this.userService.loading$;
+        this.errorResponse$ = this.userService.errorResponse$;
+        this.selectedUserId$ = this.userStore.select(currentUserId);
     }
 
-    userClick(userId: number) {
-        this.userIdService.setState(userId);
+    selectUser(user: User) {
+        this.userStore.dispatch(UserActions.selectUser({currentUser: user}))
     }
 }
