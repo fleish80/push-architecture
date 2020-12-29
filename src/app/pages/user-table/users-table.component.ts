@@ -16,9 +16,9 @@ import {UsersFilteredService} from '../../sevices/users/users-filtered.service';
     template: `
             <label>Filer</label>
             <input type="text" [formControl]="filterCtrl">
-        <div *ngIf="loading$ | async">...loading</div>
-        <div *ngIf="errorResponse$ | async as errorResponse">{{errorResponse.message}}</div>
-        <table class="table" *ngIf="users$ | async as users">
+        <div *ngIf="loading$ | ngrxPush">...loading</div>
+        <div *ngIf="errorResponse$ | ngrxPush as errorResponse">{{errorResponse.message}}</div>
+        <table class="table" *ngIf="users$ | ngrxPush as users">
             <thead>
             <tr>
                 <th>Name</th>
@@ -33,7 +33,7 @@ import {UsersFilteredService} from '../../sevices/users/users-filtered.service';
             </thead>
             <tbody>
             <tr *ngFor="let user of users" (click)="selectUser(user)"
-                [class.selected]="(selectedUserId$ | async) === user.id">
+                [class.selected]="(selectedUserId$ | ngrxPush) === user.id">
                 <td>{{user.name}}</td>
                 <td>{{user.username}}</td>
                 <td>{{user.email}}</td>

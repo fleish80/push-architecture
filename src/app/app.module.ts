@@ -9,6 +9,7 @@ import { StoreModule } from '@ngrx/store';
 import {currentUserReducer} from './state/current-user.reducer';
 import {PhotoComponent} from './pages/photo/photo.component';
 import {ReactiveFormsModule} from '@angular/forms';
+import {ReactiveComponentModule} from '@ngrx/component';
 
 @NgModule({
     declarations: [
@@ -21,7 +22,8 @@ import {ReactiveFormsModule} from '@angular/forms';
         AppRoutingModule,
         HttpClientModule,
         StoreModule.forRoot({users: currentUserReducer}, {}),
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        ReactiveComponentModule
     ],
     providers: [],
     bootstrap: [AppComponent]

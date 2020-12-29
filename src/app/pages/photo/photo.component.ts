@@ -7,9 +7,9 @@ import {HttpErrorResponse} from '@angular/common/http';
 @Component({
     selector: 'app-photo',
     template: `
-        <div *ngIf="loading$ | async">...loading</div>
-        <div *ngIf="errorResponse$ | async as errorResponse">{{errorResponse.message}}</div>
-        <ng-container *ngIf="photo$ | async as photo">
+        <div *ngIf="loading$ | ngrxPush">...loading</div>
+        <div *ngIf="errorResponse$ | ngrxPush as errorResponse">{{errorResponse.message}}</div>
+        <ng-container *ngIf="photo$ | ngrxPush as photo">
             <h2 class="photo-title">{{photo.title}}</h2>
             <img [src]="photo.thumbnailUrl" alt="">
         </ng-container>
