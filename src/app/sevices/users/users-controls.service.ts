@@ -1,24 +1,31 @@
 import {Injectable} from '@angular/core';
 import {FormControl} from '@angular/forms';
-import {UsersService} from './users.service';
-import {UsersFilteredService} from './users-filtered.service';
-import {User} from '../../models/user.model';
-import {combineLatest} from 'rxjs';
-import {startWith} from 'rxjs/operators';
+import {Observable} from 'rxjs';
+import {ComponentStore} from '@ngrx/component-store';
+
+interface State {
+    filterText: string;
+}
 
 @Injectable()
-export class UsersControlsService {
+export class UsersControlsService extends ComponentStore<State> {
 
     filterCtrl: FormControl;
 
-    constructor(private userService: UsersService, private usersFilteredService: UsersFilteredService) {
+    constructor() {
+        super({
+            filterText: ''
+        });
         this.filterCtrl = new FormControl();
-        combineLatest([this.filterCtrl.valueChanges.pipe(startWith('')),
-            this.userService.data$])
-            .subscribe(([filterText, users]: [string, User[]]) => {
-                if (users) {
-                    this.usersFilteredService.setFilterUsers(filterText, users);
-                }
-            })
+        this.filterCtrl.valueChanges
+            .subscribe((filterString: string) => {
+                this.updateFilterText(filterString);
+            });
+    }
+
+    readonly filterText$: Observable<string> = this.select<string>((state: State) => state.filterText);
+
+    updateFilterText(filterText: string) {
+        this.patchState({filterText});
     }
 }
