@@ -8,14 +8,17 @@ import {currentUserId} from '../../state/current-user.reducer';
 import * as UserActions from '../../state/current-user.actions';
 import {HttpErrorResponse} from '@angular/common/http';
 import {UsersControlsService} from '../../sevices/users/users-controls.service';
-import {UsersFilteredService} from '../../sevices/users/users-filtered.service';
 
 
 @Component({
     selector: 'app-user-table',
     template: `
+        <div>
             <label>Filer</label>
             <input type="text" [formControl]="filterCtrl">
+
+            counter: {{counter$ | ngrxPush}}
+        </div>
         <div *ngIf="loading$ | ngrxPush">...loading</div>
         <div *ngIf="errorResponse$ | ngrxPush as errorResponse">{{errorResponse.message}}</div>
         <table class="table" *ngIf="users$ | ngrxPush as users">
@@ -76,7 +79,7 @@ import {UsersFilteredService} from '../../sevices/users/users-filtered.service';
         }
     `],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [UsersService, UsersFilteredService, UsersControlsService]
+    providers: [UsersService, UsersControlsService]
 })
 export class UsersTableComponent implements OnInit {
 
@@ -84,6 +87,7 @@ export class UsersTableComponent implements OnInit {
     loading$: Observable<boolean>;
     errorResponse$: Observable<HttpErrorResponse>;
     selectedUserId$: Observable<number>;
+    counter$: Observable<number>;
 
     get filterCtrl() {
         return this.usersControlsService.filterCtrl;
@@ -91,15 +95,15 @@ export class UsersTableComponent implements OnInit {
 
     constructor(private userService: UsersService,
                 private userStore: Store<CurrentUserState>,
-                private usersControlsService: UsersControlsService,
-                private usersFilteredService: UsersFilteredService) {
+                private usersControlsService: UsersControlsService) {
     }
 
     ngOnInit(): void {
-        this.users$ = this.usersFilteredService.data$;
+        this.users$ = this.userService.filteredUsers$;
         this.loading$ = this.userService.loading$;
         this.errorResponse$ = this.userService.errorResponse$;
         this.selectedUserId$ = this.userStore.select(currentUserId);
+        this.counter$ = this.userService.counters$;
     }
 
     selectUser(user: User) {
