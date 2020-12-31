@@ -1,6 +1,6 @@
 import {HttpErrorResponse} from '@angular/common/http';
 
-export class MVContext<T> {
+export class StateContext<T> {
   data?: T;
   errorResponse?: HttpErrorResponse;
   loading: boolean;

@@ -3,20 +3,27 @@ import {NgModule} from '@angular/core';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
-import {UserTableComponent} from './pages/user-table/user-table.component';
+import {UsersTableComponent} from './pages/user-table/users-table.component';
 import {HttpClientModule} from '@angular/common/http';
-import { PhotoComponent } from './pages/photo/photo.component';
+import { StoreModule } from '@ngrx/store';
+import {currentUserReducer} from './state/current-user.reducer';
+import {PhotoComponent} from './pages/photo/photo.component';
+import {ReactiveFormsModule} from '@angular/forms';
+import {ReactiveComponentModule} from '@ngrx/component';
 
 @NgModule({
     declarations: [
         AppComponent,
-        UserTableComponent,
+        UsersTableComponent,
         PhotoComponent
     ],
     imports: [
         BrowserModule,
         AppRoutingModule,
-        HttpClientModule
+        HttpClientModule,
+        StoreModule.forRoot({users: currentUserReducer}, {}),
+        ReactiveFormsModule,
+        ReactiveComponentModule
     ],
     providers: [],
     bootstrap: [AppComponent]
