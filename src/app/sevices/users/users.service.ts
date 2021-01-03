@@ -3,7 +3,7 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {User} from '../../models/user.model';
 import {Observable} from 'rxjs';
 import {tapResponse} from '@ngrx/component-store';
-import {switchMap, tap} from 'rxjs/operators';
+import {concatMap, tap} from 'rxjs/operators';
 import {AbstractStore} from '../../store/abstract-store';
 import {UsersControlsService} from './users-controls.service';
 
@@ -42,7 +42,7 @@ export class UsersService extends AbstractStore<User[]> {
     readonly load = this.effect((trigger$: Observable<void>) => {
         return trigger$.pipe(
             tap(() => this.updateLoading(true)),
-            switchMap(() => {
+            concatMap(() => {
                 return this.fetch()
                     .pipe(
                         tapResponse(
